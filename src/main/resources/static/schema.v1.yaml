@@ -1,0 +1,155 @@
+openapi: 3.0.3
+
+info:
+  title: text Processor
+  description: "This api processes a text"
+  version: 1.0.0-SNAPSHOT
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: TextProcessor
+
+paths:
+  /textprocessor/highest:
+    post:
+      tags:
+        - TextProcessor
+      summary: "API to calculate the frequency of the mostfrequent word"
+      description: "This api returns the frequency of the mostfrequent word in the text responses:
+                    200 with integer of frequency of that word
+                    400 when bad request"
+      operationId: calculateHighest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/calculate_highest_dto"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/frequency_dto"
+
+        400:
+          $ref: "#/components/responses/400"
+
+  /textprocessor/frequency:
+    post:
+      tags:
+        - TextProcessor
+      summary: "API to calculate the frequency of a particular word"
+      description: "Calculate the frequency of a particular word in a given text.
+                    responses:
+                    200 with integer of frequency of that word
+                    400 when bad request"
+      operationId: calculateWordFrequency
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/calculate_frequency_dto"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/frequency_dto"
+        400:
+          $ref: "#/components/responses/400"
+
+  /textprocessor/mostFrequentNwords:
+    post:
+      tags:
+        - TextProcessor
+      summary: "API to calculate and list te most frequent words in a text"
+      description: "Calculate the frequency of the words in the given text and retuns an array (Json)
+                    of size N with the most frequent words and te frequency of that word.
+                    responses:
+                    200 with array of  of frequency of that word
+                    400 when bad request"
+      operationId: calculateMostFrequent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/calculate_most_frequent_dto"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/word_frequency_dto"
+        400:
+          $ref: "#/components/responses/400"
+
+components:
+  schemas:
+    calculate_highest_dto:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          example: "This is the text"
+
+    calculate_frequency_dto:
+      type: object
+      required:
+        - text
+        - word
+      properties:
+        word:
+          type: string
+          example: "text"
+        text:
+          type: string
+          example: "We want to find the number of occurrences of the word text in this text."
+
+    calculate_most_frequent_dto:
+      type: object
+      required:
+        - word
+        - text
+      properties:
+        text:
+          type: string
+          example: "this is a text"
+        numberOfWords:
+          type: integer
+          example: 3
+
+    frequency_dto:
+      type: object
+      required:
+        - frequency
+      properties:
+        frequency:
+          type: integer
+
+    word_frequency_dto:
+      type: object
+      required:
+        - word
+      properties:
+        frequency:
+          type: integer
+        word:
+          type: string
+
+  responses:
+    200:
+      description: accepted
+    400:
+      description: bad request
